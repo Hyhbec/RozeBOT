@@ -35,6 +35,9 @@ class Bot(BotBase):
 			self.ready = True
 			print('bot ready')
 
+			channel = self.get_channel(725392322698674276)
+			await channel.send('@everyone ~roze on!')
+
 		else:
 			print('bot reconnected')
 
