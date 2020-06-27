@@ -1,6 +1,6 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from discord.ext.commands import Bot as BotBase
-from discord.ext.commands import CommandNotFound
+from discord.ext.commands import CommandNotFound, Context
 from glob import glob
 from asyncio import sleep
 
@@ -57,6 +57,16 @@ class Bot(BotBase):
 		super().run(self.TOKEN, reconnect=True)
 
 
+	async def process_commands(self, message):
+		ctx = await self.get_context(message, cls=Context)
+
+		if ctx.command is not None and ctx.guild is not None:
+			if self.ready:
+				await self.invoke(ctx)
+
+			else:
+				await ctx.send('Err.. i\'m not ready now!')
+
 	async def on_connect(self):
 		print('→bot connected')
 
@@ -102,7 +112,8 @@ class Bot(BotBase):
 
 
 	async def on_message(self, message):
-		pass
+		if not message.author.bot:
+			await self.process_commands(message)
 
 
 # runs the bot
