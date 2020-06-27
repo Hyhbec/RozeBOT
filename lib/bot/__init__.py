@@ -1,9 +1,13 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from discord.ext.commands import Bot as BotBase
 from discord.ext.commands import CommandNotFound
+from glob import glob
+
+from ..db import db
 
 PREFIX = '.'
 OWNERID = [652999719710097419]
+COGS = [path.split('\\')[-1][:-3] for path in glob('./lib/cogs/*.py')]
 
 class Bot(BotBase):
 	def __init__(self):
@@ -11,10 +15,21 @@ class Bot(BotBase):
 		self.guild = None
 		self.ready = False
 		self.scheduler = AsyncIOScheduler()
+		db.autosave(self.scheduler)
 		super().__init__(command_prefix=PREFIX, owner_ids=OWNERID)
+
+
+	def setup(self):
+		for cog in COGS:
+			self.load_extension(f'lib.cogs.{cog}')
+			print(f'{cog} cog loaded')
+
+		print('setup completed')
+
 
 	def run(self, version):
 		self.VERSION = version
+		self.setup()
 
 		with open('./lib/bot/token.0', 'r', encoding='utf-8') as tf:
 			self.TOKEN = tf.read()
@@ -36,8 +51,7 @@ class Bot(BotBase):
 			await  args[0].send('Something went wrong')
 
 		else:
-			channel = self.get_channel(725392322698674276)
-			await channel.send('An error occured')
+			await self.stdout.send('An error occured')
 
 			raise
 
@@ -55,10 +69,11 @@ class Bot(BotBase):
 	async def on_ready(self):
 		if not self.ready:
 			self.ready = True
+			self.stdout = self.get_channel(725392322698674276)
+			self.scheduler.start()
 			print('bot ready')
 
-			channel = self.get_channel(725392322698674276)
-			await channel.send('@everyone ~roze on!')
+			await self.stdout.send('@everyone ~roze on!')
 
 		else:
 			print('bot reconnected')
@@ -68,4 +83,5 @@ class Bot(BotBase):
 		pass
 
 
+# runs the bot
 bot = Bot()
