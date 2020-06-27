@@ -2,6 +2,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from discord.ext.commands import Bot as BotBase
 from discord.ext.commands import CommandNotFound
 from glob import glob
+from asyncio import sleep
 
 from ..db import db
 
@@ -9,11 +10,29 @@ PREFIX = '.'
 OWNERID = [652999719710097419]
 COGS = [path.split('\\')[-1][:-3] for path in glob('./lib/cogs/*.py')]
 
+
+class Ready(object):
+	def __init__(self):
+		for cog in COGS:
+			setattr(self, cog, False)
+
+
+	def ready_up(self, cog):
+		setattr(self, cog, True)
+		print(f'{cog} cog ready')
+
+
+	def all_ready(self):
+		return all([getattr(self, cog) for cog in COGS])
+
+
+
 class Bot(BotBase):
 	def __init__(self):
 		self.PREFIX = PREFIX
 		self.guild = None
 		self.ready = False
+		self.cogs_ready = Ready()
 		self.scheduler = AsyncIOScheduler()
 		db.autosave(self.scheduler)
 		super().__init__(command_prefix=PREFIX, owner_ids=OWNERID)
@@ -39,7 +58,7 @@ class Bot(BotBase):
 
 
 	async def on_connect(self):
-		print('bot connected')
+		print('→bot connected')
 
 
 	async def on_disconnect(self):
@@ -68,11 +87,14 @@ class Bot(BotBase):
 
 	async def on_ready(self):
 		if not self.ready:
-			self.ready = True
 			self.stdout = self.get_channel(725392322698674276)
 			self.scheduler.start()
-			print('bot ready')
+			print('→bot ready')
 
+			while not self.cogs_ready.all_ready():
+				await sleep(0.5)
+
+			self.ready = True
 			await self.stdout.send('@everyone ~roze on!')
 
 		else:

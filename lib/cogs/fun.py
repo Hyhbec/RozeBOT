@@ -11,7 +11,9 @@ class Fun(Cog):
 
 	@Cog.listener()
 	async def on_ready(self):
-		print('Fun cog ready')
+		if not self.bot.ready:
+			self.bot.cogs_ready.ready_up('fun')
+		print('→Fun cog ready')
 
 
 def setup(bot):
