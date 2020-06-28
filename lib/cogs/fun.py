@@ -4,6 +4,7 @@ from random import choice, randint
 from discord import Member
 from typing import Optional
 from discord import Embed
+from aiohttp import request
 from discord.errors import HTTPException, Forbidden
 from datetime import datetime
 from discord.ext.commands import (CommandNotFound, BadArgument, MissingRequiredArgument,
@@ -52,6 +53,37 @@ class Fun(Cog):
 	async def echo_messager(self, ctx, *, message):
 		await ctx.message.delete()
 		await ctx.send(message.capitalize())
+
+	@command(name='fact')
+	async def fact_command(self, ctx, animal: str):
+		if (animal := animal.lower()) in ('dog', 'cat', 'panda', 'bird', 'fox', 'koala'):
+			URL = f'https://some-random-api.ml/facts/{animal}'
+			IMG = f'https://some-random-api.ml/img/{animal}'
+
+			async with request('GET', IMG, headers={}) as response:
+				if response.status == 200:	
+					data = await response.json()
+					image = data['link']
+
+				else:
+					image = None
+
+			async with request('GET', URL, headers={}) as response:
+				if response.status == 200:
+					data = await response.json()
+
+					em = Embed(title=f'{animal.title()} fact',
+								description=data['fact'],
+								colour=ctx.author.colour)
+					if image is not None:
+						em.set_image(url=image)
+					await ctx.send(embed=em)
+
+				else:
+					await ctx.send(f'API returned a {response.status} status.')
+		
+		else:
+			await ctx.send('No facts avaible for that animal.')
 
 
 	@Cog.listener()

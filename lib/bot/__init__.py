@@ -120,7 +120,7 @@ class Bot(BotBase):
 				await sleep(0.5)
 
 			self.ready = True
-			await self.stdout.send('@everyone ~roze on!')
+			await self.stdout.send('~roze on!')
 
 		else:
 			print('bot reconnected')
