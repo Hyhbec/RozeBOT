@@ -1,9 +1,8 @@
-from discord.ext.commands import Cog
-from discord.ext.commands import command
+from discord.ext.commands import Cog, BucketType
+from discord.ext.commands import command, cooldown
 from random import choice, randint
-from discord import Member
+from discord import Member, Embed
 from typing import Optional
-from discord import Embed
 from aiohttp import request
 from discord.errors import HTTPException, Forbidden
 from datetime import datetime
@@ -22,6 +21,7 @@ class Fun(Cog):
 
 
 	@command(name='roll', aliases=['r']) ### it's a little bug here, and we call the cmd it repeats twice and fuck my brain
+	@cooldown(1, 20, BucketType.user)
 	async def roll_dice(self, ctx, die_string: str, *, message: str = None):
 		dice, value = (int(term) for term in die_string.split('d'))
 
