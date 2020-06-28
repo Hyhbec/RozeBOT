@@ -40,6 +40,7 @@ class Fun(Cog):
 
 
 	@command(name='slap', aliases=['hit'])
+	@cooldown(1, 20, BucketType.user)
 	async def slap_member(self, ctx, member: Member, *, reason: Optional[str] = 'no reason'):
 		await ctx.send(f'{ctx.author.mention} slapped {member.mention} for {reason}')
 
@@ -50,11 +51,13 @@ class Fun(Cog):
 
 
 	@command(name='echo', aliases=['say'])
+	@cooldown(1, 20, BucketType.user)
 	async def echo_messager(self, ctx, *, message):
 		await ctx.message.delete()
 		await ctx.send(message.capitalize())
 
 	@command(name='fact')
+	@cooldown(1, 20, BucketType.user)
 	async def fact_command(self, ctx, animal: str):
 		if (animal := animal.lower()) in ('dog', 'cat', 'panda', 'bird', 'fox', 'koala'):
 			URL = f'https://some-random-api.ml/facts/{animal}'
