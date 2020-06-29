@@ -14,10 +14,14 @@ from discord.ext.commands import when_mentioned_or, command, has_permissions
 
 from ..db import db
 
-PREFIX = '.'
 OWNERID = [652999719710097419]
 COGS = [path.split('\\')[-1][:-3] for path in glob('./lib/cogs/*.py')]
 IGNORE_EXCEPTIONS =  (CommandNotFound, BadArgument)
+
+
+def get_prefix(bot, message):
+	prefix = db.field('SELECT Prefix FROM guilds WHERE GuildID = ?', message.guild.id)
+	return when_mentioned_or(prefix)(bot, message)
 
 
 class Ready(object):
@@ -38,13 +42,12 @@ class Ready(object):
 
 class Bot(BotBase):
 	def __init__(self):
-		self.PREFIX = PREFIX
 		self.guild = None
 		self.ready = False
 		self.cogs_ready = Ready()
 		self.scheduler = AsyncIOScheduler()
 		db.autosave(self.scheduler)
-		super().__init__(command_prefix=PREFIX, owner_ids=OWNERID)
+		super().__init__(command_prefix=get_prefix, owner_ids=OWNERID)
 
 
 	def setup(self):
@@ -76,6 +79,7 @@ class Bot(BotBase):
 			else:
 				await ctx.send('Err.. i\'m not ready now!')
 
+
 	async def on_connect(self):
 		print('→bot connected')
 
@@ -105,10 +109,10 @@ class Bot(BotBase):
 			await ctx.send(f"That command is on `{str(exc.cooldown.type).split('.')[-1]}` cooldown. Try again in {exc.retry_after:,.0f} secs.")
 
 		elif hasattr(exc, 'original'):
-			#elif isinstance(exc.original, HTTPException):
-			#	await ctx.send('Unable to respond.')
+			if isinstance(exc.original, HTTPException):
+				await ctx.send('Unable to respond.')
 
-			if isinstance(exc.original, Forbidden):
+			elif isinstance(exc.original, Forbidden):
 				await ctx.send('Err.. i don\'t have permissiob to do that.')
 
 			else:

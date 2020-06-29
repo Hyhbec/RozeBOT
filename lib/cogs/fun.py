@@ -15,14 +15,20 @@ class Fun(Cog):
 		self.bot = bot
 
 
-	@command(name='hi')
-	async def say_hello(self, ctx):
-		await ctx.send(f"{choice(['Hello', 'Hi', 'Hey', 'Dammn'])}, {ctx.author.mention}!")
+	@command(name='hi', brief='Say hello for me!')
+	async def say_hello(self, ctx, member: Member = None):
+		"""Say hi for me!"""
+		if member == None:
+			await ctx.send(f"{choice(['Hello', 'Hi', 'Hey', 'Damn'])}, {ctx.author.mention}!")
+
+		else:
+			await ctx.send(f"{ctx.author.mention} said {choice(['hello', 'hi', 'hey', 'damn'])} to {member.mention}")
 
 
-	@command(name='roll', aliases=['r']) ### it's a little bug here, and we call the cmd it repeats twice and fuck my brain
+	@command(name='roll', aliases=['r'], brief='Roll a dice') ### it's a little bug here, and we call the cmd it repeats twice and fuck my brain
 	@cooldown(1, 20, BucketType.user)
 	async def roll_dice(self, ctx, die_string: str, *, message: str = None):
+		"""Roll as many dices with many sides as you want."""
 		dice, value = (int(term) for term in die_string.split('d'))
 
 		if dice <= 25:
@@ -39,9 +45,10 @@ class Fun(Cog):
 		#await ctx.send(embed=embedr)
 
 
-	@command(name='slap', aliases=['hit'])
+	@command(name='slap', aliases=['hit'], brief='Slap someone in his/her face!')
 	@cooldown(1, 20, BucketType.user)
 	async def slap_member(self, ctx, member: Member, *, reason: Optional[str] = 'no reason'):
+		"""Mention someone to slap him/her"""
 		await ctx.send(f'{ctx.author.mention} slapped {member.mention} for {reason}')
 
 	@slap_member.error
@@ -50,15 +57,17 @@ class Fun(Cog):
 			await ctx.send('Err.. i can\'t find that member.')
 
 
-	@command(name='echo', aliases=['say'])
+	@command(name='echo', aliases=['say'], brief='Echo, echo, echo, echo...')
 	@cooldown(1, 20, BucketType.user)
 	async def echo_messager(self, ctx, *, message):
+		"""Echo your message for everyone can see it."""
 		await ctx.message.delete()
 		await ctx.send(message.capitalize())
 
-	@command(name='fact')
+	@command(name='fact', brief='Shows up some cool animal facts')
 	@cooldown(1, 20, BucketType.user)
 	async def fact_command(self, ctx, animal: str):
+		"""Animals avaible: koala, fox, dog, cat, bird, panda"""
 		if (animal := animal.lower()) in ('dog', 'cat', 'panda', 'bird', 'fox', 'koala'):
 			URL = f'https://some-random-api.ml/facts/{animal}'
 			IMG = f'https://some-random-api.ml/img/{animal}'
