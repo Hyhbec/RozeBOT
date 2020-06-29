@@ -26,24 +26,6 @@ class Admin(Cog):
 			await ctx.send("You need the Manage Server permission to do that.")
 
 
-	@command(name='serverinfo', aliases=['sinfo'], brief='')
-	@has_permissions(manage_guild=True)
-	async def show_server_info(self, ctx):
-		"""Show server info."""
-		em = Embed(title=f'{ctx.guild.name} Server Information',
-				   description='Informations:',
-				   colour=ctx.author.colour)
-		em.add_field(name='Server name:', value=f'{ctx.guild.name}', inline=False)
-		em.add_field(name='Server owner:', value=f'{ctx.guild.owner}', inline=False)
-		em.add_field(name='Member count:', value=f'{ctx.guild.member_count}', inline=False)
-		await ctx.send(embed=em)
-
-	@show_server_info.error
-	async def show_server_info_error(self, ctx):
-		if isinstance(exc, CheckFailure):
-			await ctx.send('You need the Manage Server permission to do that.')
-
-
 	@Cog.listener()
 	async def on_ready(self):
 		if not self.bot.ready:
