@@ -22,6 +22,7 @@ class Welcome(Cog):
 		#await self.bot.get_channel(727266182864044052).send(f"Welcome to **{member.guild.name}**, {member.mention}!")
 
 		em=Embed(title=f'{member.display_name}', description='• User joined', timestamp=datetime.utcnow())
+		em.set_thumbnail(url=member.avatar_url)
 		await self.bot.get_channel(727266182864044052).send(embed=em)
 
 		try:
@@ -39,6 +40,7 @@ class Welcome(Cog):
 		#await self.bot.get_channel(727266182864044052).send(f"{member.mention} has left {member.guild.name}.")
 
 		em=Embed(title=f'{member.display_name}', description='• User lefted', timestamp=datetime.utcnow())
+		em.set_thumbnail(url=member.avatar_url)
 		await self.bot.get_channel(727266182864044052).send(embed=em)
 		
 

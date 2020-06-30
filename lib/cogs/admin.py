@@ -34,3 +34,7 @@ class Admin(Cog):
 
 def setup(bot):
 	bot.add_cog(Admin(bot))
+
+
+
+db.field("SELECT LogChannel FROM guilds")

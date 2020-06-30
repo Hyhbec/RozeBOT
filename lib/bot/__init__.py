@@ -46,7 +46,9 @@ class Bot(BotBase):
 		self.ready = False
 		self.cogs_ready = Ready()
 		self.scheduler = AsyncIOScheduler()
+
 		db.autosave(self.scheduler)
+		
 		super().__init__(command_prefix=get_prefix, owner_ids=OWNERID)
 
 
@@ -81,7 +83,7 @@ class Bot(BotBase):
 
 
 	async def on_connect(self):
-		print('→bot connected')
+		print('bot connected')
 
 
 	async def on_disconnect(self):
