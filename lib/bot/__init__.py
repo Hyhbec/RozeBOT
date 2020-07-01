@@ -139,7 +139,29 @@ class Bot(BotBase):
 
 	async def on_message(self, message):
 		if not message.author.bot:
-			await self.process_commands(message)
+			if isinstance(message.channel, DMChannel):
+				if len(message.content) < 50:
+					await message.channel.send('Your message should be at least 50 characters in length.')
+
+				else:
+					embed = Embed(title="Modmail",
+								  colour=message.author.colour,
+								  timestamp=datetime.utcnow())
+			
+					embed.set_thumbnail(url=message.author.avatar_url)
+			
+					fields = [("Member", message.author.mention, False),
+							  ("Message", message.content, False)]
+			
+					for name, value, inline in fields:
+						embed.add_field(name=name, value=value, inline=inline)
+							
+					mod = self.get_cog('Mod')
+					await mod.log_channel.send(embed=embed)
+					await message.channel.send('Message relayed to moderators.')
+
+			else:
+				await self.process_commands(message)
 
 
 # runs the bot
