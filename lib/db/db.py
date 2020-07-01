@@ -10,7 +10,7 @@ cxn = connect(DB_PATH, check_same_thread=False)
 cur = cxn.cursor()
 
 
-#cxn.execute("INSERT INTO guilds (GuildID, Prefix) VALUES (727266032775069759, '.')")
+#cxn.execute("INSERT INTO guilds (GuildID, Prefix, WelcomeChannel, LogChannel) VALUES (727266032775069759, '.', 727266182864044052, 727266207581077504)")
 
 
 def with_commit(func):

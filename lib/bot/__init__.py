@@ -122,6 +122,7 @@ class Bot(BotBase):
 
 	async def on_ready(self):
 		if not self.ready:
+			self.guild = self.get_guild(727266032775069759)
 			self.stdout = self.get_channel(727287866824327222)
 			self.scheduler.start()
 			print('→bot ready')
